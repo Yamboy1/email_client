@@ -24,7 +24,7 @@ fn fetch_newest_email_subjects(mut imap_session: ImapSession) -> Result<Vec<Stri
     imap_session.select("INBOX")?;
 
     let mut uids: Vec<_> = Vec::from_iter(imap_session.search("ALL")?);
-    uids.sort();
+    uids.sort_unstable();
 
     let most_recent: Vec<_> = uids.iter().rev().take(4).map(|x| x.to_string()).collect();
     let messages = imap_session.fetch(most_recent.join(","), "BODY.PEEK[HEADER.FIELDS (Subject)]")?;
@@ -46,6 +46,6 @@ fn main() -> GenericResult {
     for subject in fetch_newest_email_subjects(imap_session)? {
         println!("{}", subject);
     }
-    
+
     Ok(())
 }
