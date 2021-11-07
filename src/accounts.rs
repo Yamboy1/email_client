@@ -1,7 +1,7 @@
 use std::fs;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize)]
 pub struct ImapAccountConfig {
     pub domain: String,
     pub port: u16,
@@ -9,7 +9,7 @@ pub struct ImapAccountConfig {
     pub password: String
 }
 
-pub fn get_account_config() -> Result<ImapAccountConfig, Box<dyn std::error::Error>> {
+pub fn get_account_config() -> crate::Result<ImapAccountConfig> {
     let file_content = fs::read_to_string("Accounts.toml")?;
     Ok(toml::from_str(&file_content)?)
 }
