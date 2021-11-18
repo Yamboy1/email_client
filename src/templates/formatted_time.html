@@ -1,0 +1,18 @@
+{% macro formatted_time(time) %}
+    {% set formatted_then = time | date(format="%F", timezone="Pacific/Auckland") %}
+    {% set formatted_now = now() | date(format="%F", timezone="Pacific/Auckland") %}
+    {% set year_then = time | date(format="%G", timezone="Pacific/Auckland") %}
+    {% set year_now = now() | date(format="%G", timezone="Pacific/Auckland") %}
+
+    {% if formatted_then == formatted_now %}
+        Today
+    {% else %}
+        {{ time | date(format="%b %d", timezone="Pacific/Auckland") }}
+
+        {% if year_then != year_now %}
+            {{ year_then }}
+        {% endif %}
+    {% endif %}
+
+    at {{ time | date(format="%R", timezone="Pacific/Auckland") }}
+{% endmacro %}

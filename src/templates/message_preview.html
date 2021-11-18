@@ -1,3 +1,5 @@
+{% import "formatted_time.html" as macros %}
+
 {% for preview in previews %}
     <hr>
     <p>
@@ -5,7 +7,14 @@
         <br>
         <b>Author:</b> {{ preview.author }}
         <br>
-        <b>Timestamp:</b> {{ preview.timestamp }}
+        <b>Timestamp:</b> {{ macros::formatted_time(time=preview.time) }}
     </p>
 {% endfor %}
 <hr>
+
+{#
+    - Today
+    - Yesterday
+    - June 5 2021
+
+#}

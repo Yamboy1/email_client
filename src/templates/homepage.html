@@ -1,0 +1,23 @@
+{% import "formatted_time.html" as macros %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Email thing</title>
+        <link rel="stylesheet" href="/public/index.css">
+    </head>
+    <body>
+        <h1 class="center">Email thing</h1>
+        <div class="grid">
+            {% for preview in previews %}
+                <div class="message">
+                    <h3 class="title">{{ preview.title }}</h3>
+                    <p class="author">{{ preview.author }}</p>
+                    <div><hr></div>
+                    <p class="preview">{{ preview.text }}</p>
+                    <p class="bottom"><span class="timestamp">{{ macros::formatted_time(time=preview.time) }}</span><a class="expand" href="javascript:alert('fuck you')">Expand...</a></p>
+                </div>
+            {% endfor %}
+            </div>
+    </body>
+</html>

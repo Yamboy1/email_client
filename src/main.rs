@@ -1,6 +1,7 @@
 use std::sync::{Mutex, Arc};
 use warp::Filter;
-use tera::{Tera, Context};
+use tera::{Tera, Context, Function, Value};
+
 
 mod accounts;
 mod providers;
@@ -19,23 +20,36 @@ async fn main() -> GenericResult {
         }
     };
 
-    let mutex = Arc::new(Mutex::new(providers::imap::login_imap(accounts::get_account_config()?)?));
+    println!("Logging in...");
 
-    println!("Logged in");
+    let mut a = providers::imap::login_imap(accounts::get_account_config()?)?;
 
-    let root = warp::path!("/")
+    println!("Logged in!");
+
+    providers::imap::fetch_range_message_previews(0, 4, &mut a).unwrap();
+
+    let mutex = Arc::new(Mutex::new(a));
+
+    let app = warp::path!("app")
         .map(move || {
             let mut imap_session = mutex.lock().unwrap();
-            let message_previews = providers::imap::fetch_range_message_previews(0,4, &mut imap_session).unwrap();
+            let message_previews = providers::imap::fetch_range_message_previews(0, 20, &mut imap_session).unwrap();
 
             let mut context = Context::new();
             context.insert("previews", &message_previews);
 
-            let content = tera.render("message_preview.html", &context).unwrap();
+            let content = tera.render("homepage.html", &context).unwrap();
             warp::reply::html(content)
         });
 
-    warp::serve(root)
+    let public = warp::path("public")
+        .and(warp::fs::dir("src/public"));
+
+    let routes = warp::get().and(
+        app.or(public)
+    );
+
+    warp::serve(routes)
         .run(([127,0,0,1], 3030))
         .await;
 

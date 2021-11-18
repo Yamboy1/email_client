@@ -4,5 +4,6 @@ use serde::Serialize;
 pub struct MessagePreview {
     pub title: String,
     pub author: String,
-    pub timestamp: i64
+    pub time: String,
+    pub text: String
 }
